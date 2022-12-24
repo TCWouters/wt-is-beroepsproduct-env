@@ -1,6 +1,24 @@
 <?php
+require_once 'db_connectie.php';
+
+$db = maakVerbinding();
+
+$naam = $_post['naam'];
+$vluchtnummer = $_post['vluchtnummer'];
+$geslacht = $_post['geslacht'];
+$objectvolgnummer = $_post['objectvolgnummer'];
+$gewicht = $_post['gewicht'];
 
 
+$passagiersnummer = 'select max(passagiernummer) from passagier';
+
+$passagiersnummer = $passagiersnummer . 1;
+
+$queryPassagier = 'insert into passagier
+value('$passagiersnummer ',' $naam ',' $vluchtnummer ',' $geslacht ', null,' ',' date_create('now') ')';
+
+$queryBagage = 'insert into bagageObject
+value('$passagiersnummer ',' $objectvolgnummer ',' $gewicht ')';
 ?>
 
 <!DOCTYPE html>
@@ -22,29 +40,23 @@
         <main>
             <form action="mainmenu.php" method="post">    
             <div class="formulier">
-                <label>voorletters</label>
-                <input type="text"  name="voorlet" pattern="[A-Za-z]" required>
-                <label>achternaam</label>
-                <input type="text"  name="achternaam" pattern="[A-Za-z]" required>
-                <label>E-mail</label>
-                <input type="email"  name="E-mail" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                <label>naam</label>
+                <input type="text"  name="naam" pattern="[A-Za-z]" required>
+                <label>vluchtnummer</label>
+                <input type="text"  name="vluchtnummer" pattern="[0-9]" required>
+                <label>objectvolgnummer</label>
+                <input type="numeric"  name="objectvolgnummer" pattern="[0-9]" required>
                 <label>geslacht</label>
                 <select id="geslacht" name="geslacht">
                     <option>M</option>
                     <option>V</option>
+                    <option>x</option>
                 </select>
                 <label>aantal bagage</label>
-                <select id="bagage" name="bagage">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                <input type="number" name="bagage">
                 </select>   
-                <label>bagage gewicht totaal</label>
-                <select id="bagage_gewicht" name="bagage">
-                    <option>10 kg</option>
-                    <option>20 kg</option>
-                    <option>30 kg</option>
-                </select>   
+                <label>bagage gewicht gemiddeld</label>
+                <input type="number" name="gewicht">
                 <br>
             </div>
             <div class="checkin">
