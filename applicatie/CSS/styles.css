@@ -1,0 +1,136 @@
+body {
+  background: cadetblue;
+}
+
+li{
+  display: inline;
+}
+
+.titel{
+  text-align: center;
+}
+
+.knop {
+  background-color: white;
+  opacity: 0.5;
+  padding: 15px 32px;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.knop a:hover{
+  background-color: green;
+}
+
+.index{
+  display: flex;
+  justify-content: center;
+}
+
+.navigatie{
+  background-color: white;
+  box-shadow: 2px 2px 5px black;
+}
+
+.navigatie ul{
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+  display: flex;
+}
+
+.navigatie li{
+  flex: 5;
+}
+
+.navigatie a{
+  display: inline-block;
+  width: 100%;
+  padding: 20px 5px;
+  text-decoration: none;
+  font-weight: 30;
+  font-size: 120%;
+  letter-spacing: 5px;
+  color:blue;
+}
+
+.navigatie a:hover{
+  transition: all 1000ms ease-in;
+  font-size: 200%;
+  background-color: rgb(125, 2, 2)
+}
+
+.navigatie li a:hover{
+  transition: all 1000ms ease-in;
+  font-size: 200%;
+}
+
+.navigatie li a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+@media screen and (max-width: 600px){
+  .navigatie ul{
+      flex-direction: column;
+  }
+}
+
+.text{
+  font-size: 150%;
+}
+
+.text a:hover{
+  color: red;
+}
+
+.formulier{
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.checkin{
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.bagage{
+  display:flex;
+  justify-content: center;
+}
+
+.tabel{
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
+.passagiershead{
+  border: 1px solid black;
+  font-weight: bold;
+}
+
+.passagiersgegevens{
+  border: 1px solid black;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
+.Login{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer{
+  display:flex;
+  justify-content: center;
+}
