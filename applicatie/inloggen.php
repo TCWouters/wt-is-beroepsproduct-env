@@ -1,3 +1,32 @@
+<?php
+require_once 'db_connectie.php';
+
+$db = maakVerbinding();
+
+$username = '';
+$password = '';
+$melding = 'De inlog gegevens zijn onjuist.';
+$salt = 'dfghbgtfvghbnjhbvdsde325rt678ikjhgfr';
+$hashed = '$2y$10$5NSz6tecv4h4wVWyXi0Pvuu/y.XFvztBRGJdNi347mdo1HQw3HKz2';
+$hash = '';
+
+if(isset($_POST['inloggen'])){
+    if(!empty($_POST[''])){
+        $username = $_POST['gebruikersnaam'];
+        $username = strip_tags($username);
+        $username = addslashes($username);
+        $username = htmlspecialchars($username);
+        $username = htmlentities($username);
+    }
+    if(!empty($_POST['wachtwoord'])){
+        $password = $_POST['wachtwoord'];
+        $password = $password . $salt;
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+    }
+    
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en-US">
     <head>
@@ -15,17 +44,18 @@
             </div>
         </header>
         <main>
-            <form action="mainmenuMW.php" method="post">           
+            <form action="inloggen.php" method="post">           
                 <div class="Login">
                   <label><b>gebruikersnaam</b></label> <br>
-                  <input type="text" name="gebruikersnaam" required>
+                  <input type="text" name="gebruikersnaam"  value="<?=$username?>" required>
                     <br>
                   <label><b>wachtwoord</b></label> <br>
-                  <input type="password" name="gebruikersnaam" required>
+                  <input type="password" name="wachtwoord" required>
                   <br>
-                  <button type="submit">Login</button>
+                  <input type="submit" id="opslaan" name="inloggen" value="inloggen">
                 </div>
             </form>
+            <?= $hash ?>
         </main>
     </body>
 </html>

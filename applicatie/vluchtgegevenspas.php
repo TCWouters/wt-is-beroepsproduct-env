@@ -6,20 +6,21 @@
     $table = '';
     $i = 0;
 
-    if(isset($_POST['naam'])){
-        $username = $_POST['naam'];
-        $username = strip_tags($username);
-        $username = addslashes($username);
-        $username = htmlspecialchars($username);
-        $username = htmlentities($username);
-        $where = "where naam like '%" .$username. "%'";
-    } else{
+    if(isset($_POST['passagiernummer'])){
+        if(is_numeric($_POST['passagiernummer'])){
+            $passagiersnummer = $_POST['passagiernummer'];
+            $where = "where passagiernummer =" .$passagiersnummer;
+            }
+            else{
+                header("location: https://www.youtube.com/watch?v=dwLCjZVEtpE");
+            }
+        } 
+     else{
         $where = 'where 0=1';
     }
-
+    
     $query = "select * from vlucht 
-    where vluchtnummer in 
-    (select vluchtnummer from passagier $where)";
+    where vluchtnummer in (select vluchtnummer from passagier " .$where. ")";
 
     $stmt = $db->prepare($query);
     $stmt->execute();
@@ -56,7 +57,7 @@
     }
 
     if($i == 0 && $where != 'where 0=1'){
-        $table = 'geen gegevens gevonden voor ' . $_POST['naam'];
+        $table = 'geen gegevens gevonden voor ' . $_POST['passagiernummer'];
     }
 
     if($where != 'where 0=1'){
@@ -95,7 +96,7 @@
         <main>
             <br><br>
             <form action="vluchtgegevenspas.php" method="post">
-                <input type="text" name="naam" placeholder="naam">
+                <input type="number" name="passagiernummer" placeholder="passagiernummer">
                 <button type="submit">Zoek</button>
             </form>
             <?php echo $table ?>

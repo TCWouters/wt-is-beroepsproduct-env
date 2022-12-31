@@ -3,22 +3,32 @@ require_once 'db_connectie.php';
 
 $db = maakVerbinding();
 
-$naam = $_post['naam'];
-$vluchtnummer = $_post['vluchtnummer'];
-$geslacht = $_post['geslacht'];
-$objectvolgnummer = $_post['objectvolgnummer'];
-$gewicht = $_post['gewicht'];
+$succes = '';
+$datum = date_create('now');
+$resultaat = $datum->format('Y-m-d H:i:s');
+
+if(isset($_POST['submit'])){
+
+$querypassagier = 'update passagier
+set inchecktijdstip = ' .$resultaat.
+' where passagiernummer = ' .$_POST['passagiernummer']. 'and vluchtnummer = ' .$_POST['vluchtnummer'];
+
+$querybagage = 'insert into bagageObject
+values (' .$_POST['passagiernummer']. ',' .$_POST['objectvolgnummer']. ',' .$_POST['gewicht']. ')';
+
+$succes = 'gegevens succesvol doorgevoerd';
 
 
-$passagiersnummer = 'select max(passagiernummer) from passagier';
+// $stmtpassagier = $db->prepare($querypassagier);
+// $stmtpassagier->execute();
 
-$passagiersnummer = $passagiersnummer . 1;
-
-$queryPassagier = 'insert into passagier
-value('$passagiersnummer ',' $naam ',' $vluchtnummer ',' $geslacht ', null,' ',' date_create('now') ')';
-
-$queryBagage = 'insert into bagageObject
-value('$passagiersnummer ',' $objectvolgnummer ',' $gewicht ')';
+// $stmtbagage = $db->prepare($querybagage);
+// $stmtbagage->execute();
+}
+var_dump($_POST['passagiernummer']);
+var_dump($_POST['vluchtnummer']);
+var_dump($_POST['objectvolgnummer']);
+var_dump($_POST['gewicht']);
 ?>
 
 <!DOCTYPE html>
@@ -38,20 +48,14 @@ value('$passagiersnummer ',' $objectvolgnummer ',' $gewicht ')';
             </div>
         </header>
         <main>
-            <form action="mainmenu.php" method="post">    
+            <form action="checkin.php" method="post">    
             <div class="formulier">
-                <label>naam</label>
-                <input type="text"  name="naam" pattern="[A-Za-z]" required>
+                <label>passagiernummer</label>
+                <input type="number"  name="passagiernummer" required>
                 <label>vluchtnummer</label>
-                <input type="text"  name="vluchtnummer" pattern="[0-9]" required>
+                <input type="text"  name="vluchtnummer"  required>
                 <label>objectvolgnummer</label>
-                <input type="numeric"  name="objectvolgnummer" pattern="[0-9]" required>
-                <label>geslacht</label>
-                <select id="geslacht" name="geslacht">
-                    <option>M</option>
-                    <option>V</option>
-                    <option>x</option>
-                </select>
+                <input type="numeric"  name="objectvolgnummer" required>
                 <label>aantal bagage</label>
                 <input type="number" name="bagage">
                 </select>   
@@ -60,10 +64,10 @@ value('$passagiersnummer ',' $objectvolgnummer ',' $gewicht ')';
                 <br>
             </div>
             <div class="checkin">
-                <input type="submit">
+                <input type="submit" name ="submit">
             </div>
             </form>
-        
+            <?php echo $succes ?>
             <div class="bagage">
                 <img src="images/bagage.jpg" alt="bagage foto">
             </div>
