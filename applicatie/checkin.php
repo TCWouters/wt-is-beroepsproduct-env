@@ -1,34 +1,47 @@
+<!-- werkt nog niet -->
 <?php
 require_once 'db_connectie.php';
 
 $db = maakVerbinding();
 
-$succes = '';
+
+
 $datum = date_create('now');
 $resultaat = $datum->format('Y-m-d H:i:s');
 
-if(isset($_POST['submit'])){
+$succes = '';
 
-$querypassagier = 'update passagier
-set inchecktijdstip = ' .$resultaat.
-' where passagiernummer = ' .$_POST['passagiernummer']. 'and vluchtnummer = ' .$_POST['vluchtnummer'];
+if(isset($_POST['submit'])){
+    $passagiernummer = $_POST['passagiernummer'];
+    $vluchtnummer = $_POST['vluchtnummer'];
+    $objectvolgnummer = $_POST['objectvolgnummer'];
+    $gewicht = $_POST['gewicht'];
+
+    
+    require 'tagremover.php';
+    $passagiernummer = strip($passagiernummer);
+    $vluchtnummer = strip($vluchtnummer);
+    $objectvolgnummer = strip($objectvolgnummer);
+    $gewicht = strip($gewicht);
+    
+    
+$querypassagier = "update passagier
+set inchecktijdstip = '" .$resultaat. 
+"' where passagiernummer = " .$passagiernummer. " and vluchtnummer = " .$vluchtnummer;
 
 $querybagage = 'insert into bagageObject
-values (' .$_POST['passagiernummer']. ',' .$_POST['objectvolgnummer']. ',' .$_POST['gewicht']. ')';
+values (' .$passagiernummer. ',' .$objectvolgnummer. ',' .$gewicht. ')';
 
 $succes = 'gegevens succesvol doorgevoerd';
 
 
-// $stmtpassagier = $db->prepare($querypassagier);
-// $stmtpassagier->execute();
+$stmtpassagier = $db->prepare($querypassagier);
+$stmtpassagier->execute();
 
-// $stmtbagage = $db->prepare($querybagage);
-// $stmtbagage->execute();
+var_dump($stmtpassagier);
+$stmtbagage = $db->prepare($querybagage);
+$stmtbagage->execute();
 }
-var_dump($_POST['passagiernummer']);
-var_dump($_POST['vluchtnummer']);
-var_dump($_POST['objectvolgnummer']);
-var_dump($_POST['gewicht']);
 ?>
 
 <!DOCTYPE html>
@@ -55,7 +68,7 @@ var_dump($_POST['gewicht']);
                 <label>vluchtnummer</label>
                 <input type="text"  name="vluchtnummer"  required>
                 <label>objectvolgnummer</label>
-                <input type="numeric"  name="objectvolgnummer" required>
+                <input type="number"  name="objectvolgnummer" required>
                 <label>aantal bagage</label>
                 <input type="number" name="bagage">
                 </select>   

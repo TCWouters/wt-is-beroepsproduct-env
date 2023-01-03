@@ -2,28 +2,33 @@
 require_once 'db_connectie.php';
 
 $db = maakVerbinding();
+$query = "select * from test";
+// $query = "select uid from medewerkers where password = '" .$hash. "' and naam = '" .$username. "'";
+
+$stmt = $db->prepare($query);
+$stmt->execute();
 
 $username = '';
 $password = '';
+$hash = '';
+
 $melding = 'De inlog gegevens zijn onjuist.';
 $salt = 'dfghbgtfvghbnjhbvdsde325rt678ikjhgfr';
 $hashed = '$2y$10$5NSz6tecv4h4wVWyXi0Pvuu/y.XFvztBRGJdNi347mdo1HQw3HKz2';
-$hash = '';
 
 if(isset($_POST['inloggen'])){
-    if(!empty($_POST[''])){
+    if(!empty($_POST['gebruikersnaam'])){
         $username = $_POST['gebruikersnaam'];
-        $username = strip_tags($username);
-        $username = addslashes($username);
-        $username = htmlspecialchars($username);
-        $username = htmlentities($username);
+
+        require_once 'tagremover.php';
+        $username = strip($username);
     }
     if(!empty($_POST['wachtwoord'])){
         $password = $_POST['wachtwoord'];
         $password = $password . $salt;
         $hash = password_hash($password, PASSWORD_DEFAULT);
     }
-    
+
 }
 ?>
 

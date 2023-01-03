@@ -1,3 +1,9 @@
+<?php
+    require_once 'db_connectie.php';
+
+    $db = maakVerbinding();
+?>
+
 <!DOCTYPE html>
 <html lang="en-US">
     <head>
@@ -17,7 +23,7 @@
         </nav>
         
     <main>
-        <form action="mainmenuMW.php" method="post"> 
+        <form action="checkinMW.php" method="post"> 
         <div class="formulier">
             <label>vlucht nummer</label>
             <input type="text" id="vluchtnr" name="vluchtnr" required>
@@ -38,7 +44,7 @@
             <br>
         </div>
         <div class="checkin">
-            <input type="submit">
+            <input type="submit" name="submit">
         </div>
         </form>
         </main>

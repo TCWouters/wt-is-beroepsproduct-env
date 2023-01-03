@@ -18,28 +18,22 @@
         <main>
             <form action="mainmenuMW.php" method="post"> 
             <div class="formulier">
-                <label>voorletters</label>
-                <input type="text"  name="voorlet" pattern="[A-Za-z]" required>
-                <label>achternaam</label>
-                <input type="text"  name="achternaam" pattern="[A-Za-z]" required>
-                <label>E-mail</label>
-                <input type="email"  name="E-mail" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-                <label>vlucht nummer</label>
-                <input type="text" id="vluchtnr" name="vluchtnr" required>
-                <label>eind bestemming</label>
-                <input type="text" id="eindbestemming" name="eindbestemming" pattern="[A-Za-z]" required>
+                <label>naam</label>
+                    <input type="text"  name="naam" required>
+                <label>vluchtnummer</label>
+                    <input type="text" id="vluchtnr" name="vluchtnr" required>
+                <label>eindbestemming</label>
+                    <input type="text" id="eindbestemming" name="eindbestemming" required>
                 <label>aantal bagage</label>
-                <select id="bagage" name="bagage">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                </select>   
+                    <input type="number" id="bagage" name="bagage" required>
                 <label>bagage gewicht totaal</label>
-                <select id="bagage_gewicht" name="bagage">
-                    <option>10 kg</option>
-                    <option>20 kg</option>
-                    <option>30 kg</option>
-                </select>   
+                    <input type="number" id="bagage_gewicht" name="bagage" required>
+                <label>balienummer</label>
+                    <input type = "number" name="balie" required>
+                <label>passagiersnummer</label>
+                    <input type ="number" name ="passagiersnummer" required>
+                <label>stoel</label>
+                    <input type="text" name="stoel" required>
                 <br>
             </div>
             <div class="checkin">

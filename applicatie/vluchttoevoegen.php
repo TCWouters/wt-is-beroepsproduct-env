@@ -1,3 +1,44 @@
+<?php
+    require_once 'db_connectie.php';
+
+    $db = maakVerbinding();
+
+    $succes = '';
+
+
+    if(isset($_POST['submit'])){
+        // $queryvluchtnummer = 'select max(vluchtnummer) from vlucht';
+        // $stmt = $db->prepare($queryvluchtnummer);
+        // $stmt->execute();
+
+        // $vluchtnummer =  + 1;
+
+        $vluchtnummer =         $_POST['vluchtnr'];
+        $bestemming =           $_POST['bestemming'];
+        $gatecode =             $_POST['gate'];
+        $max_aantal =           $_POST['max_aantal'];
+        $max_gewicht_pp =       $_POST['max_gewicht_pp'];
+        $max_totaalgewicht =    $_POST['max_totaalgewicht'];
+        $maatschappij =         $_POST['maatschappij'];
+
+        $vertrektijd =      $_POST['vertrektijd'];
+        $vertrektijd =      strtotime($vertrektijd);
+        $vertrektijd =      date("Y/m/d H:i:s", $vertrektijd);
+
+
+        $queryvlucht = "insert into vlucht 
+                        values(" .$vluchtnummer. ", '".$bestemming. "' ,'" .$gatecode. "'," .$max_aantal. "," .$max_gewicht_pp. "," 
+                        .$max_totaalgewicht. ", '".$vertrektijd."' , '".$maatschappij."' )";
+
+        
+        $stmt = $db->prepare($queryvlucht);
+        $stmt->execute();
+        
+        var_dump($queryvlucht);
+        $succes = 'gegevens succesvol doorgevoerd';
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en-US">
     <head>
@@ -12,29 +53,34 @@
                 <ul>
                 <li><a   href="mainmenuMW.php">Home</a></li>
                 <li><a   href="checkinMW.php">Passagier inchecken</a></li>
-                <li><a  href="ToevoegenMW.php">Passagier toevoegen</a></li>
-                <li><a  class="active" href="vluchttoevoegen.php">Vlucht toevoegen</a></li>
+                <li><a   href="ToevoegenMW.php">Passagier toevoegen</a></li>
+                <li><a   class="active" href="vluchttoevoegen.php">Vlucht toevoegen</a></li>
                 </ul>
             </div>
         </nav>
     <main>
-        <form action="mainmenuMW.php" method="post"> 
+        <form action="vluchttoevoegen.php" method="post"> 
         <div class="formulier">
             <label>vluchtnummer</label>
-            <input type="text" id="vluchtnr" name="vluchtnr" required>
-            <label>vlucht maatschapij</label>
-            <input type="text" id="maatschapij" name="maatschapij" required>
-            <label>eind bestemming</label>
-            <input type="text" id="eindbestemming" name="eindbestemming" required>
-            <label>vliegtuig</label>
-            <input type="text" id="vliegtuig" name="vliegtuig" required>
+                <input type="number" id="vluchtnr" name="vluchtnr" required>
+            <label>vlucht maatschappij</label>
+                <input type="text" id="maatschappij" name="maatschappij" required>
+            <label>bestemming</label>
+                <input type="text" id="bestemming" name="bestemming" required>
+            <label>maximale aantal passagiers</label>
+                <input type="text" id="max_aantal" name="max_aantal" required>
+            <label>maximale gewicht per passagier</label>
+                <input type="number" id="max_gewicht_pp" name="max_gewicht_pp" required>
+            <label>maximale totaal gewicht</label>
+                <input type="number" id="max_totaalgewicht" name="max_totaalgewicht" required>
+            <label>vertrektijd</label>
+                <input type="datetime" id="vertrektijd" name="vertrektijd" placeholder='Y-M-D H-M' required>
             <label>gate</label>
-            <input type="text" id="gate" name="gate" pattern="[0-9]" required>
+                <input type="text" id="gate" name="gate" required>
             <br>
         </div>
         <div class="checkin">
-            <button formnovalidate="formnovalidate">Terug</button>
-            <input type="submit">
+            <input type="submit" name="submit">
         </div>
         </form>
         </main>
