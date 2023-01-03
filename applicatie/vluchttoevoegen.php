@@ -63,7 +63,7 @@
         <div class="formulier">
             <label>vluchtnummer</label>
                 <input type="number" id="vluchtnr" name="vluchtnr" required>
-            <label>vlucht maatschappij</label>
+            <label>maatschappij code</label>
                 <input type="text" id="maatschappij" name="maatschappij" required>
             <label>bestemming</label>
                 <input type="text" id="bestemming" name="bestemming" required>

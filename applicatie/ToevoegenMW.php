@@ -11,8 +11,8 @@
                 <ul>
                     <li><a   href="mainmenuMW.php">Home</a></li>
                     <li><a   href="checkinMW.php">Passagier inchecken</a></li>
-                    <li><a  class="active" href="ToevoegenMW.php">Passagier toevoegen</a></li>
-                    <li><a  href="vluchttoevoegen.php">Vlucht toevoegen</a></li>
+                    <li><a   class="active" href="ToevoegenMW.php">Passagier toevoegen</a></li>
+                    <li><a   href="vluchttoevoegen.php">Vlucht toevoegen</a></li>
                 </ul>
             </nav>
         <main>
@@ -20,6 +20,11 @@
             <div class="formulier">
                 <label>naam</label>
                     <input type="text"  name="naam" required>
+                <label>geslacht</label>
+                    <select name="geslacht">
+                        <option>M</option>
+                        <option>V</option>
+                        <option>X</option>
                 <label>vluchtnummer</label>
                     <input type="text" id="vluchtnr" name="vluchtnr" required>
                 <label>eindbestemming</label>

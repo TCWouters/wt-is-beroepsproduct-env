@@ -4,8 +4,6 @@ require_once 'db_connectie.php';
 
 $db = maakVerbinding();
 
-
-
 $datum = date_create('now');
 $resultaat = $datum->format('Y-m-d H:i:s');
 
@@ -17,7 +15,7 @@ if(isset($_POST['submit'])){
     $objectvolgnummer = $_POST['objectvolgnummer'];
     $gewicht = $_POST['gewicht'];
 
-    
+
     require 'tagremover.php';
     $passagiernummer = strip($passagiernummer);
     $vluchtnummer = strip($vluchtnummer);
@@ -38,7 +36,7 @@ $succes = 'gegevens succesvol doorgevoerd';
 $stmtpassagier = $db->prepare($querypassagier);
 $stmtpassagier->execute();
 
-var_dump($stmtpassagier);
+
 $stmtbagage = $db->prepare($querybagage);
 $stmtbagage->execute();
 }

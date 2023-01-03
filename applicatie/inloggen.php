@@ -2,11 +2,7 @@
 require_once 'db_connectie.php';
 
 $db = maakVerbinding();
-$query = "select * from test";
-// $query = "select uid from medewerkers where password = '" .$hash. "' and naam = '" .$username. "'";
 
-$stmt = $db->prepare($query);
-$stmt->execute();
 
 $username = '';
 $password = '';
@@ -29,6 +25,10 @@ if(isset($_POST['inloggen'])){
         $hash = password_hash($password, PASSWORD_DEFAULT);
     }
 
+    $query = "select uid from Medewerkers where password = '" .$hash. "' and naam = '" .$username. "'";
+
+    $stmt = $db->prepare($query);
+    $stmt->execute();
 }
 ?>
 

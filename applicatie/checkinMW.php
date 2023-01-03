@@ -1,7 +1,43 @@
 <?php
-    require_once 'db_connectie.php';
+require_once 'db_connectie.php';
 
-    $db = maakVerbinding();
+$db = maakVerbinding();
+
+$datum = date_create('now');
+$resultaat = $datum->format('Y-m-d H:i:s');
+
+$succes = '';
+
+if(isset($_POST['submit'])){
+    $passagiernummer = $_POST['passagiernummer'];
+    $vluchtnummer = $_POST['vluchtnummer'];
+    $objectvolgnummer = $_POST['objectvolgnummer'];
+    $gewicht = $_POST['gewicht'];
+
+    require 'tagremover.php';
+    $passagiernummer = strip($passagiernummer);
+    $vluchtnummer = strip($vluchtnummer);
+    $objectvolgnummer = strip($objectvolgnummer);
+    $gewicht = strip($gewicht);
+    
+    
+$querypassagier = "update passagier
+set inchecktijdstip = '" .$resultaat. "' 
+where passagiernummer = " .$passagiernummer. " and vluchtnummer = " .$vluchtnummer;
+
+$querybagage = 'insert into bagageObject
+values (' .$passagiernummer. ',' .$objectvolgnummer. ',' .$gewicht. ')';
+
+$succes = 'gegevens succesvol doorgevoerd';
+
+
+$stmtpassagier = $db->prepare($querypassagier);
+$stmtpassagier->execute();
+
+
+$stmtbagage = $db->prepare($querybagage);
+$stmtbagage->execute();
+}
 ?>
 
 <!DOCTYPE html>
@@ -25,22 +61,18 @@
     <main>
         <form action="checkinMW.php" method="post"> 
         <div class="formulier">
-            <label>vlucht nummer</label>
-            <input type="text" id="vluchtnr" name="vluchtnr" required>
+            <label>vluchtnummer</label>
+                <input type="text" id="vluchtnr" name="vluchtnr" required>
             <label>gate</label>
-            <input type="text" id="gate" name="gate" pattern="[0-9]" required>
+                <input type="text" id="gate" name="gate" required>
             <label>aantal bagage</label>
-            <select id="bagage" name="bagage">
-                <option>1</option>
-                <option >2</option>
-                <option >3</option>
-            </select>   
-            <label>bagage gewicht totaal</label>
-            <select id="bagage_gewicht" name="bagage">
-                <option>10 kg</option>
-                <option>20 kg</option>
-                <option>30 kg</option>
-            </select>   
+                <input type="number" id="bagage" name="bagage"> 
+            <label>bagage gewicht gemiddeld</label>
+                <input type="number" name="gewicht">
+            <label>objectvolgnummer</label>
+                <input type="number" name="objectvolgnummer">
+            <label>balienummer</label>
+                <input type = "number" name="balie" required>
             <br>
         </div>
         <div class="checkin">
