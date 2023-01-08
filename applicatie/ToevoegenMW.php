@@ -1,3 +1,35 @@
+<?php
+    // uitgevoerde code is MW-05
+    // database connectie
+    require_once 'db_connectie.php';
+
+    $db = maakVerbinding();
+
+    $succes = '';
+
+    // passagier toevoegen
+    if(isset($_POST['submit'])){
+        // ingevoerde gegevens
+        $naam =                   $_POST['naam'];
+        $passagiernummer =        $_POST['passagiersnummer'];
+        $geslacht =               $_POST['geslacht'];
+        $vluchtnummer =           $_POST['vluchtnr'];
+        $balie =                  $_POST['balie'];
+        $stoel =                  $_POST['stoel'];
+
+        //query om de passagier in te voeren in de database
+        $query = "insert into passagier
+        values ( :passagiernummer , :naam , :vluchtnummer , :geslacht , :balie , :stoel , null )";
+        
+        $stmt = $db->prepare($query);
+        $stmt->execute([':passagiernummer' => $passagiernummer, ':naam' => $naam, ':vluchtnummer' => $vluchtnummer, 
+        ':geslacht' => $geslacht, ':balie' => $balie, ':stoel' => $stoel]);
+        
+        // succes
+        $succes = 'gegevens succesvol doorgevoerd';
+    }  
+?>
+
 <!DOCTYPE html>
 <html lang="en-US">
     <head>
@@ -16,36 +48,33 @@
                 </ul>
             </nav>
         <main>
-            <form action="mainmenuMW.php" method="post"> 
+            <form action="toevoegenMW.php" method="post"> 
             <div class="formulier">
                 <label>naam</label>
                     <input type="text"  name="naam" required>
+                <label>passagiersnummer</label>
+                    <input type ="number" name ="passagiersnummer" required>
                 <label>geslacht</label>
                     <select name="geslacht">
                         <option>M</option>
                         <option>V</option>
                         <option>X</option>
+                    </select>
                 <label>vluchtnummer</label>
                     <input type="text" id="vluchtnr" name="vluchtnr" required>
-                <label>eindbestemming</label>
-                    <input type="text" id="eindbestemming" name="eindbestemming" required>
-                <label>aantal bagage</label>
-                    <input type="number" id="bagage" name="bagage" required>
-                <label>bagage gewicht totaal</label>
-                    <input type="number" id="bagage_gewicht" name="bagage" required>
                 <label>balienummer</label>
                     <input type = "number" name="balie" required>
-                <label>passagiersnummer</label>
-                    <input type ="number" name ="passagiersnummer" required>
                 <label>stoel</label>
                     <input type="text" name="stoel" required>
                 <br>
             </div>
             <div class="checkin">
                 <button formnovalidate="formnovalidate">Terug</button>
-                <input type="submit"> 
+                <input type="submit" name="submit"> 
             </div>
             </form>
+            <br> <br> <br>
+            <?php echo $succes ?>
         </main>
     </body>
 </html>

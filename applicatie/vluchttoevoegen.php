@@ -1,18 +1,22 @@
 <?php
+    // uitgevoerde code is MW-04
+    // maakt database connectie
     require_once 'db_connectie.php';
 
     $db = maakVerbinding();
 
     $succes = '';
 
-
+    // vlucht aanmaken begint
     if(isset($_POST['submit'])){
+        // volgende vluchtnummer vinden en gebruiken NIET AF 
         // $queryvluchtnummer = 'select max(vluchtnummer) from vlucht';
         // $stmt = $db->prepare($queryvluchtnummer);
         // $stmt->execute();
 
         // $vluchtnummer =  + 1;
 
+        // ingevoerde gegevens
         $vluchtnummer =         $_POST['vluchtnr'];
         $bestemming =           $_POST['bestemming'];
         $gatecode =             $_POST['gate'];
@@ -25,7 +29,7 @@
         $vertrektijd =      strtotime($vertrektijd);
         $vertrektijd =      date("Y/m/d H:i:s", $vertrektijd);
 
-
+        // query wordt uitgevoerd
         $queryvlucht = "insert into vlucht 
                         values(" .$vluchtnummer. ", '".$bestemming. "' ,'" .$gatecode. "'," .$max_aantal. "," .$max_gewicht_pp. "," 
                         .$max_totaalgewicht. ", '".$vertrektijd."' , '".$maatschappij."' )";
@@ -33,8 +37,7 @@
         
         $stmt = $db->prepare($queryvlucht);
         $stmt->execute();
-        
-        var_dump($queryvlucht);
+        // succes
         $succes = 'gegevens succesvol doorgevoerd';
     }
 ?>
@@ -83,6 +86,8 @@
             <input type="submit" name="submit">
         </div>
         </form>
+        <br> <br> <br>
+            <?php echo $succes ?>
         </main>
     </body>
 </html>

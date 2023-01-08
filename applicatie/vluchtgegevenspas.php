@@ -1,30 +1,44 @@
 <?php
+    // uitgevoerde code is PA-01
+    // maakt database connectie
     require_once 'db_connectie.php';
 
     $db = maakVerbinding();
 
     $table = '';
     $i = 0;
+    $fout = '';
 
+    // checkt of passagiernummer is geset
     if(isset($_POST['passagiernummer'])){
+
+        // checkt of de passagiernummer niet leeg is
+        if($_POST['passagiernummer'] == "" && isset($_POST['submit'])){
+            $where = 'where 0=1';
+            $fout = 'geen nummer ingevoerd';
+        }
+
+        // checkt of de passagiernummer nummers zijn
         if(is_numeric($_POST['passagiernummer'])){
             $passagiersnummer = $_POST['passagiernummer'];
             $where = "where passagiernummer =" .$passagiersnummer;
             }
             else{
-                header("location: https://www.youtube.com/watch?v=dwLCjZVEtpE");
+                $fout = 'geen nummer';
             }
         } 
      else{
         $where = 'where 0=1';
-    }
+     }
     
+     // query om de passagier te vinden
     $query = "select * from vlucht 
     where vluchtnummer in (select vluchtnummer from passagier " .$where. ")";
 
     $stmt = $db->prepare($query);
     $stmt->execute();
 
+    // maakt de tabel voor de gegevens
     if($where != 'where 0=1' ){
         $table = '<table class = "passagiersgegevens">';
         $table = $table . '<tr>
@@ -55,7 +69,7 @@
         <td>$vertrektijd</td><td>$maatschappijcode</td></tr>";
         $i++;
     }
-
+    // als de tabel leeg is dan zijn er geen gegevens
     if($i == 0 && $where != 'where 0=1'){
         $table = 'geen gegevens gevonden voor ' . $_POST['passagiernummer'];
     }
@@ -96,10 +110,13 @@
         <main>
             <br><br>
             <form action="vluchtgegevenspas.php" method="post">
+                <label>Voer hier uw passagiernummer in</label>
+                <br>
                 <input type="number" name="passagiernummer" placeholder="passagiernummer">
-                <button type="submit">Zoek</button>
+                <button type="submit" name="submit">Zoek</button>
             </form>
             <?php echo $table ?>
+            <?php echo $fout ?>
         </main>
     </body> 
 </html>

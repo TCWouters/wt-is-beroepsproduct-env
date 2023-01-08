@@ -1,34 +1,53 @@
 <?php
+// uitgevoerde code is OG-03
+// database connectie
 require_once 'db_connectie.php';
 
 $db = maakVerbinding();
-
-
+// variabelen die nodig zijn
 $username = '';
 $password = '';
 $hash = '';
 
+// standaard melding
 $melding = 'De inlog gegevens zijn onjuist.';
+
+// wachtwoord toevoeging
 $salt = 'dfghbgtfvghbnjhbvdsde325rt678ikjhgfr';
-$hashed = '$2y$10$5NSz6tecv4h4wVWyXi0Pvuu/y.XFvztBRGJdNi347mdo1HQw3HKz2';
 
 if(isset($_POST['inloggen'])){
     if(!empty($_POST['gebruikersnaam'])){
         $username = $_POST['gebruikersnaam'];
 
+        // SQL injectie verkomen
         require_once 'tagremover.php';
         $username = strip($username);
     }
     if(!empty($_POST['wachtwoord'])){
         $password = $_POST['wachtwoord'];
+
+        // SQL injectie verkomen
+        require_once 'tagremover.php';
+        $password = strip($password);
+        // toevoeging voor de wachtwoord
         $password = $password . $salt;
+        // wachtwoord wordt gehasht
         $hash = password_hash($password, PASSWORD_DEFAULT);
     }
-
-    $query = "select uid from Medewerkers where password = '" .$hash. "' and naam = '" .$username. "'";
+    // query om medewerker te vinden
+    $query = "select uid from Medewerkers where password = :password and naam = :username";
 
     $stmt = $db->prepare($query);
-    $stmt->execute();
+    $stmt->execute([':password' => $hash, ':username' => $username]);
+
+    // zorgen dat de gegevens kloppen
+    $output=$stmt->fetchAll();
+
+    $hashed_password=$output;
+
+    foreach($hashed_password as $check){    
+    var_dump(password_verify($hash, $hashed_password));
+    }
 }
 ?>
 
@@ -60,7 +79,6 @@ if(isset($_POST['inloggen'])){
                   <input type="submit" id="opslaan" name="inloggen" value="inloggen">
                 </div>
             </form>
-            <?= $hash ?>
         </main>
     </body>
 </html>

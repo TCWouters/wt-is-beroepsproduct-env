@@ -1,42 +1,52 @@
 <?php
+// uitgevoerde code is MW-01
+// maakt database connectie
 require_once 'db_connectie.php';
 
 $db = maakVerbinding();
 
-$datum = date_create('now');
-$resultaat = $datum->format('Y-m-d H:i:s');
-
 $succes = '';
-
+// inchecken begint
 if(isset($_POST['submit'])){
+
+    // tijd van nu opnemen
+    $datum = date_create('now');
+    $resultaat = $datum->format('Y-m-d H:i:s');
+
+    // ingevulden gegevens
+    $aantalbagage = $_post['bagage'];
     $passagiernummer = $_POST['passagiernummer'];
-    $vluchtnummer = $_POST['vluchtnummer'];
+    $vluchtnummer = $_POST['vluchtnr'];
     $objectvolgnummer = $_POST['objectvolgnummer'];
     $gewicht = $_POST['gewicht'];
 
+    // SQL injectie verkomen
     require 'tagremover.php';
     $passagiernummer = strip($passagiernummer);
     $vluchtnummer = strip($vluchtnummer);
     $objectvolgnummer = strip($objectvolgnummer);
     $gewicht = strip($gewicht);
     
-    
-$querypassagier = "update passagier
-set inchecktijdstip = '" .$resultaat. "' 
-where passagiernummer = " .$passagiernummer. " and vluchtnummer = " .$vluchtnummer;
+    //query voor de tijdstip
+    $querypassagier = "update passagier
+    set inchecktijdstip = ':inchecktijdstip' 
+    where passagiernummer = :passagiernummer  and vluchtnummer = :vluchtnummer";
 
-$querybagage = 'insert into bagageObject
-values (' .$passagiernummer. ',' .$objectvolgnummer. ',' .$gewicht. ')';
+    //query voor de bagage
+    $querybagage = 'insert into bagageObject
+    values ( :passagiernummer , :objectvolgnummer  , :gewicht)';
 
-$succes = 'gegevens succesvol doorgevoerd';
+    $stmtpassagier = $db->prepare($querypassagier);
+    $stmtpassagier->execute([':inchecktijdstip' => $resultaat, ':passagiernummer' => $passagiernummer, 
+    ':vluchtnummer' => $vluchtnummer]);
 
 
-$stmtpassagier = $db->prepare($querypassagier);
-$stmtpassagier->execute();
+    $stmtbagage = $db->prepare($querybagage);
+    $stmtbagage->execute([':passagiernummer' => $passagiernummer, ':objectvolgnummer' => $objectvolgnummer, 
+    ':gewicht' => $gewicht]);
 
-
-$stmtbagage = $db->prepare($querybagage);
-$stmtbagage->execute();
+    // succesvol
+    $succes = 'gegevens succesvol doorgevoerd';
 }
 ?>
 
@@ -61,10 +71,10 @@ $stmtbagage->execute();
     <main>
         <form action="checkinMW.php" method="post"> 
         <div class="formulier">
+            <label>Passagiernummer</label>
+                <input type="number" name="passagiernummer" value="<?=$passagiernummer?>" required>
             <label>vluchtnummer</label>
                 <input type="text" id="vluchtnr" name="vluchtnr" required>
-            <label>gate</label>
-                <input type="text" id="gate" name="gate" required>
             <label>aantal bagage</label>
                 <input type="number" id="bagage" name="bagage"> 
             <label>bagage gewicht gemiddeld</label>
@@ -79,7 +89,9 @@ $stmtbagage->execute();
             <input type="submit" name="submit">
         </div>
         </form>
-        </main>
+        <br> <br> <br>
+            <?php echo $succes ?>
+    </main>
         <footer>
             <div class="footer">
                 <p>

@@ -1,44 +1,49 @@
-<!-- werkt nog niet -->
 <?php
-require_once 'db_connectie.php';
+    // uitgevoerde code is PA-02
+    // maakt database connectie
+    require_once 'db_connectie.php';
 
-$db = maakVerbinding();
-
-$datum = date_create('now');
-$resultaat = $datum->format('Y-m-d H:i:s');
-
-$succes = '';
-
-if(isset($_POST['submit'])){
-    $passagiernummer = $_POST['passagiernummer'];
-    $vluchtnummer = $_POST['vluchtnummer'];
-    $objectvolgnummer = $_POST['objectvolgnummer'];
-    $gewicht = $_POST['gewicht'];
+    $db = maakVerbinding();
 
 
-    require 'tagremover.php';
-    $passagiernummer = strip($passagiernummer);
-    $vluchtnummer = strip($vluchtnummer);
-    $objectvolgnummer = strip($objectvolgnummer);
-    $gewicht = strip($gewicht);
-    
-    
-$querypassagier = "update passagier
-set inchecktijdstip = '" .$resultaat. 
-"' where passagiernummer = " .$passagiernummer. " and vluchtnummer = " .$vluchtnummer;
+    $succes = '';
 
-$querybagage = 'insert into bagageObject
-values (' .$passagiernummer. ',' .$objectvolgnummer. ',' .$gewicht. ')';
+    // in checken start
+    if(isset($_POST['submit'])){
+        // tijd van nu opnemen
+        $datum = date_create('now');
+        $resultaat = $datum->format('Y-m-d H:i:s');
 
-$succes = 'gegevens succesvol doorgevoerd';
+        // variabelen die zijn ingevuld
+        $passagiernummer = $_POST['passagiernummer'];
+        $vluchtnummer = $_POST['vluchtnummer'];
+        $objectvolgnummer = $_POST['objectvolgnummer'];
+        $gewicht = $_POST['gewicht'];
+
+        // SQL injectie verkomen
+        require 'tagremover.php';
+        $passagiernummer = strip($passagiernummer);
+        $vluchtnummer = strip($vluchtnummer);
+        $objectvolgnummer = strip($objectvolgnummer);
+        $gewicht = strip($gewicht);
+        
+        // query voor de tijdstip
+        $querypassagier = "update passagier
+        set inchecktijdstip = :resultaat where passagiernummer = :passagiernummer and vluchtnummer = :vluchtnummer";
+
+        // query voor de bagage invoegen
+        $querybagage = 'insert into bagageObject
+        values (' .$passagiernummer. ',' .$objectvolgnummer. ',' .$gewicht. ')';
+
+        $stmtpassagier = $db->prepare($querypassagier);
+        $stmtpassagier->execute([':resultaat' => $resultaat, ':passagiernummer' => $passagiernummer, ':vluchtnummer' => $vluchtnummer]);
 
 
-$stmtpassagier = $db->prepare($querypassagier);
-$stmtpassagier->execute();
+        $stmtbagage = $db->prepare($querybagage);
+        $stmtbagage->execute();
 
-
-$stmtbagage = $db->prepare($querybagage);
-$stmtbagage->execute();
+        // succes
+        $succes = 'gegevens succesvol doorgevoerd';
 }
 ?>
 
@@ -78,6 +83,7 @@ $stmtbagage->execute();
                 <input type="submit" name ="submit">
             </div>
             </form>
+            <br> <br>
             <?php echo $succes ?>
             <div class="bagage">
                 <img src="images/bagage.jpg" alt="bagage foto">

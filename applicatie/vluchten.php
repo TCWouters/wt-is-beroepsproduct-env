@@ -1,23 +1,38 @@
 <?php
+    // codes die worden uitgevoerd hier: GB-02, MW-02
+
+    // database connectie
     require_once 'db_connectie.php';
 
     $db = maakVerbinding();
-
     
+    $fout = '';
+    // vlucht wordt uitgevoerd
     if(isset($_GET['vluchtnummer'])){
+        // wordt gecheckt of vluchtnummer niet leeg is
+        if($_GET['vluchtnummer'] == "" && isset($_GET['submit'])){
+            $where = '1=1';
+            $fout = 'geen nummer ingevoerd';
+        }
+        // wordt gecheckt of vluchtnummer een nummer is
         if(is_numeric($_GET['vluchtnummer'])){
-            $where = 'where vluchtnummer = ' . $_GET['vluchtnummer'];
+            $where = $_GET['vluchtnummer'];
         }
         else{
-            header("location: https://www.youtube.com/watch?v=dwLCjZVEtpE");
+            $fout = 'geen nummer ingevoerd';
         }
     } else{
-        $where = '';
+        $where = '1=1';
     }
     
+    // query wordt uitgevoerd
+    $query = 'select * from vlucht where vluchtnummer = :vluchtnummer';
 
-    $query = "select * from vlucht $where";
+    $stmt = $db->prepare($query);
+    $stmt->execute([":vluchtnummer" => $where]);
 
+
+    //tabel wordt aangemaakt
     $table = '<table class = "passagiersgegevens">';
     $table = $table . '<tr><th>vluchtnummer</th>
     <th>bestemming</th>
@@ -27,9 +42,6 @@
     <th>max totaalgewicht</th>
     <th>vertrektijd</th>
     <th>maatschappijcode</th></tr>';
-
-    $stmt = $db->prepare($query);
-    $stmt->execute();
 
 while($rij = $stmt->fetch()) {
   $vluchtnummer = $rij['vluchtnummer'];
@@ -77,7 +89,7 @@ while($rij = $stmt->fetch()) {
         <main>
             <form action="vluchten.php" method="get">
             <input type="number" name="vluchtnummer" placeholder="Zoek vluchtnummer">
-            <button type="submit">Zoek</button>
+            <button type="hidden" name="submit">Zoek</button>
             <br> <br>
             <?php echo($table) ?>
             </form>
