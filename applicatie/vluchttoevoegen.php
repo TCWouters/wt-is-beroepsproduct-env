@@ -9,15 +9,15 @@
 
     // vlucht aanmaken begint
     if(isset($_POST['submit'])){
-        // volgende vluchtnummer vinden en gebruiken NIET AF 
-        // $queryvluchtnummer = 'select max(vluchtnummer) from vlucht';
-        // $stmt = $db->prepare($queryvluchtnummer);
-        // $stmt->execute();
+        // volgende vluchtnummer vinden en gebruiken 
+        $queryvluchtnummer = 'select max(vluchtnummer) from vlucht';
+        $stmt = $db->prepare($queryvluchtnummer);
+        $stmt->execute();
 
-        // $vluchtnummer =  + 1;
+        $resultaat = $stmt->fetch();
+        $vluchtnummer = $resultaat[0] + 1;
 
         // ingevoerde gegevens
-        $vluchtnummer =         $_POST['vluchtnr'];
         $bestemming =           $_POST['bestemming'];
         $gatecode =             $_POST['gate'];
         $max_aantal =           $_POST['max_aantal'];
@@ -33,7 +33,6 @@
         $queryvlucht = "insert into vlucht 
                         values(" .$vluchtnummer. ", '".$bestemming. "' ,'" .$gatecode. "'," .$max_aantal. "," .$max_gewicht_pp. "," 
                         .$max_totaalgewicht. ", '".$vertrektijd."' , '".$maatschappij."' )";
-
         
         $stmt = $db->prepare($queryvlucht);
         $stmt->execute();
@@ -64,8 +63,8 @@
     <main>
         <form action="vluchttoevoegen.php" method="post"> 
         <div class="formulier">
-            <label>vluchtnummer</label>
-                <input type="number" id="vluchtnr" name="vluchtnr" required>
+            <!-- <label>vluchtnummer</label>
+                <input type="number" id="vluchtnr" name="vluchtnr" required> -->
             <label>maatschappij code</label>
                 <input type="text" id="maatschappij" name="maatschappij" required>
             <label>bestemming</label>
