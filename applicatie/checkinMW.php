@@ -5,7 +5,8 @@ require_once 'db_connectie.php';
 
 $db = maakVerbinding();
 
-$succes = '';
+$uitkomst = '';
+
 // inchecken begint
 if(isset($_POST['submit'])){
 
@@ -17,14 +18,13 @@ if(isset($_POST['submit'])){
     $aantalbagage = $_post['bagage'];
     $passagiernummer = $_POST['passagiernummer'];
     $vluchtnummer = $_POST['vluchtnr'];
-    $objectvolgnummer = $_POST['objectvolgnummer'];
     $gewicht = $_POST['gewicht'];
 
     // SQL injectie verkomen
     require 'tagremover.php';
     $passagiernummer = strip($passagiernummer);
     $vluchtnummer = strip($vluchtnummer);
-    $objectvolgnummer = strip($objectvolgnummer);
+    $bagage = strip($bagage);
     $gewicht = strip($gewicht);
     
     //query voor de tijdstip
@@ -36,17 +36,20 @@ if(isset($_POST['submit'])){
     $querybagage = 'insert into bagageObject
     values ( :passagiernummer , :objectvolgnummer  , :gewicht)';
 
-    $stmtpassagier = $db->prepare($querypassagier);
-    $stmtpassagier->execute([':inchecktijdstip' => $resultaat, ':passagiernummer' => $passagiernummer, 
-    ':vluchtnummer' => $vluchtnummer]);
+    try{
+        $stmtpassagier = $db->prepare($querypassagier);
+        $stmtpassagier->execute([':resultaat' => $resultaat, ':passagiernummer' => $passagiernummer, ':vluchtnummer' => $vluchtnummer]);
 
-
-    $stmtbagage = $db->prepare($querybagage);
-    $stmtbagage->execute([':passagiernummer' => $passagiernummer, ':objectvolgnummer' => $objectvolgnummer, 
-    ':gewicht' => $gewicht]);
-
-    // succesvol
-    $succes = 'gegevens succesvol doorgevoerd';
+        for($i = 0; $i < $aantalbagage; $i++){
+            $stmtbagage = $db->prepare($querybagage);
+            $stmtbagage->execute([':passagiernummer' => $passagiernummer,':objectvolgnummer' => $i, ':gewicht' => $gewicht ]);
+        }
+        // succes
+        $uitkomst = 'gegevens succesvol doorgevoerd';
+    } catch(PDOException $fault){
+        // SQL error
+        $uitkomst = "Er staat al een aanmelding voor deze gebruiker";
+    }
 }
 ?>
 
@@ -90,7 +93,7 @@ if(isset($_POST['submit'])){
         </div>
         </form>
         <br> <br> <br>
-            <?php echo $succes ?>
+            <?php echo $uitkomst ?>
     </main>
         <footer>
             <div class="footer">

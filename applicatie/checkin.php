@@ -1,12 +1,11 @@
 <?php
-    // uitgevoerde code is PA-02
+    // uitgevoerde code is PA-02, PA-03
     // maakt database connectie
     require_once 'db_connectie.php';
 
     $db = maakVerbinding();
 
-
-    $succes = '';
+    $uitkomst = '';
 
     // in checken start
     if(isset($_POST['submit'])){
@@ -15,16 +14,16 @@
         $resultaat = $datum->format('Y-m-d H:i:s');
 
         // variabelen die zijn ingevuld
+        $aantalbagage = $_POST['bagage'];
         $passagiernummer = $_POST['passagiernummer'];
         $vluchtnummer = $_POST['vluchtnummer'];
-        $objectvolgnummer = $_POST['objectvolgnummer'];
         $gewicht = $_POST['gewicht'];
 
         // SQL injectie verkomen
         require 'tagremover.php';
+        $aantalbagage = strip($aantalbagage);
         $passagiernummer = strip($passagiernummer);
         $vluchtnummer = strip($vluchtnummer);
-        $objectvolgnummer = strip($objectvolgnummer);
         $gewicht = strip($gewicht);
         
         // query voor de tijdstip
@@ -33,17 +32,22 @@
 
         // query voor de bagage invoegen
         $querybagage = 'insert into bagageObject
-        values (' .$passagiernummer. ',' .$objectvolgnummer. ',' .$gewicht. ')';
+        values (:passagiernummer, :objectvolgnummer, :gewicht)';
 
-        $stmtpassagier = $db->prepare($querypassagier);
-        $stmtpassagier->execute([':resultaat' => $resultaat, ':passagiernummer' => $passagiernummer, ':vluchtnummer' => $vluchtnummer]);
+        try{
+            $stmtpassagier = $db->prepare($querypassagier);
+            $stmtpassagier->execute([':resultaat' => $resultaat, ':passagiernummer' => $passagiernummer, ':vluchtnummer' => $vluchtnummer]);
 
-
-        $stmtbagage = $db->prepare($querybagage);
-        $stmtbagage->execute();
-
-        // succes
-        $succes = 'gegevens succesvol doorgevoerd';
+            for($i = 0; $i < $aantalbagage; $i++){
+                $stmtbagage = $db->prepare($querybagage);
+                $stmtbagage->execute([':passagiernummer' => $passagiernummer,':objectvolgnummer' => $i, ':gewicht' => $gewicht ]);
+            }
+            // succes
+            $uitkomst = 'gegevens succesvol doorgevoerd';
+        } catch(PDOException $fault){
+            // SQL error
+            $uitkomst = "Er staat al een aanmelding voor deze gebruiker";
+        }
 }
 ?>
 
@@ -70,8 +74,6 @@
                 <input type="number"  name="passagiernummer" required>
                 <label>vluchtnummer</label>
                 <input type="text"  name="vluchtnummer"  required>
-                <label>objectvolgnummer</label>
-                <input type="number"  name="objectvolgnummer" required>
                 <label>aantal bagage</label>
                 <input type="number" name="bagage">
                 </select>   
@@ -84,7 +86,7 @@
             </div>
             </form>
             <br> <br>
-            <?php echo $succes ?>
+            <?php echo $uitkomst ?>
             <div class="bagage">
                 <img src="images/bagage.jpg" alt="bagage foto">
             </div>

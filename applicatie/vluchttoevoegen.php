@@ -30,12 +30,14 @@
         $vertrektijd =      date("Y/m/d H:i:s", $vertrektijd);
 
         // query wordt uitgevoerd
-        $queryvlucht = "insert into vlucht 
-                        values(" .$vluchtnummer. ", '".$bestemming. "' ,'" .$gatecode. "'," .$max_aantal. "," .$max_gewicht_pp. "," 
-                        .$max_totaalgewicht. ", '".$vertrektijd."' , '".$maatschappij."' )";
+        $queryvlucht = 'insert into vlucht 
+                        values(:vluchtnummer, :bestemming, :gatecode, :max_aantal, :max_gewicht_pp, :max_totaalgewicht,
+                        :vertrektijd, :maatschappij)';
         
         $stmt = $db->prepare($queryvlucht);
-        $stmt->execute();
+        $stmt->execute([':vluchtnummer' => $vluchtnummer, ':bestemming' => $bestemming, ':gatecode' => $gatecode, 
+        ':max_aantal' => $max_aantal, ':max_gewicht_pp' => $max_gewicht_pp, ':max_totaalgewicht' => $max_totaalgewicht, 
+        ':vertrektijd' => $vertrektijd, ':maatschappij' => $maatschappij]);
         // succes
         $succes = 'gegevens succesvol doorgevoerd';
     }
@@ -63,8 +65,6 @@
     <main>
         <form action="vluchttoevoegen.php" method="post"> 
         <div class="formulier">
-            <!-- <label>vluchtnummer</label>
-                <input type="number" id="vluchtnr" name="vluchtnr" required> -->
             <label>maatschappij code</label>
                 <input type="text" id="maatschappij" name="maatschappij" required>
             <label>bestemming</label>

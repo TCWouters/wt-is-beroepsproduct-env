@@ -21,7 +21,7 @@
         // checkt of de passagiernummer nummers zijn
         if(is_numeric($_POST['passagiernummer'])){
             $passagiersnummer = $_POST['passagiernummer'];
-            $where = "where passagiernummer =" .$passagiersnummer;
+            $where = $passagiersnummer;
             }
             else{
                 $fout = 'geen nummer';
@@ -33,10 +33,10 @@
     
      // query om de passagier te vinden
     $query = "select * from vlucht 
-    where vluchtnummer in (select vluchtnummer from passagier " .$where. ")";
+    where vluchtnummer in (select vluchtnummer from passagier where passagiernummer = :passagiernummer )";
 
     $stmt = $db->prepare($query);
-    $stmt->execute();
+    $stmt->execute([':passagiernummer' => $passagiersnummer]);
 
     // maakt de tabel voor de gegevens
     if($where != 'where 0=1' ){
