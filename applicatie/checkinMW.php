@@ -26,7 +26,7 @@
             $gewicht = $_POST['gewicht'];
 
             // SQL injectie verkomen
-            require 'tagremover.php';
+            require 'functies.php';
             $passagiernummer = strip($passagiernummer);
             $vluchtnummer = strip($vluchtnummer);
             $bagage = strip($bagage);
@@ -57,9 +57,8 @@
             }
         }
         if(isset($_POST['uitloggen'])){
-            session_unset();
-            session_destroy();
-            header('location index.php');
+        require_once 'functies.php';
+        uitloggen();
         }
     } 
 ?>

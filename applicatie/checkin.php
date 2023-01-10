@@ -20,12 +20,29 @@
         $gewicht = $_POST['gewicht'];
 
         // SQL injectie verkomen
-        require 'tagremover.php';
+        require 'functies.php';
         $aantalbagage = strip($aantalbagage);
         $passagiernummer = strip($passagiernummer);
         $vluchtnummer = strip($vluchtnummer);
         $gewicht = strip($gewicht);
         
+        //checks voor query's
+        $querygewicht = "select max_gewicht_pp from vlucht where vluchtnummer = :vluchtnummer";
+
+        $stmtgewicht= $db->prepare($querygewicht);
+        $stmtgewicht->execute([':vluchtnummer' => $vluchtnummer]);
+
+        $queryplaats = "select max_aantal from vlucht where vluchtnummer = :vluchtnummer";
+
+        $stmtplaats= $db->prepare($queryplaats);
+        $stmtplaats->execute([':vluchtnummer' => $vluchtnummer]);
+
+
+        $stmtgewicht= $db->prepare($querygewicht);
+        $stmtgewicht->execute([':vluchtnummer' => $vluchtnummer]);
+
+        
+
         // query voor de tijdstip
         $querypassagier = "update passagier
         set inchecktijdstip = :resultaat where passagiernummer = :passagiernummer and vluchtnummer = :vluchtnummer";
@@ -33,6 +50,7 @@
         // query voor de bagage invoegen
         $querybagage = 'insert into bagageObject
         values (:passagiernummer, :objectvolgnummer, :gewicht)';
+
 
         try{
             $stmtpassagier = $db->prepare($querypassagier);
@@ -48,6 +66,9 @@
             // SQL error
             $uitkomst = "Er staat al een aanmelding voor deze gebruiker";
         }
+}
+if(isset($_POST['terug'])){
+    header('location: mainmenu.php');
 }
 ?>
 
@@ -82,6 +103,7 @@
                 <br>
             </div>
             <div class="checkin">
+                <input type="submit" name= "terug" value="terug" formnovalidate> <br>
                 <input type="submit" name ="submit">
             </div>
             </form>

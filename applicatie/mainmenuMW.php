@@ -4,10 +4,9 @@ session_start();
         header('location: index.php');
 }else{
     if(isset($_POST['uitloggen'])){
-        session_unset();
-        session_destroy();
-        header('location index.php');
-    }
+        require_once 'functies.php';
+        uitloggen();
+        }
 }
 ?>
 

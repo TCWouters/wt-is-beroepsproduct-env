@@ -24,14 +24,14 @@ if(isset($_POST['inloggen'])){
         $username = $_POST['gebruikersnaam'];
 
         // SQL injectie verkomen
-        require_once 'tagremover.php';
+        require_once 'functies.php';
         $username = strip($username);
     }
     if(!empty($_POST['wachtwoord'])){
         $password = $_POST['wachtwoord'];
 
         // SQL injectie verkomen
-        require_once 'tagremover.php';
+        require_once 'functies.php';
         $password = strip($password);
 
         // toevoeging voor de wachtwoord
