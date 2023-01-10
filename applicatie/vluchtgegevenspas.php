@@ -8,6 +8,7 @@
     $table = '';
     $i = 0;
     $fout = '';
+    $passagiersnummer = -1;
 
     // checkt of passagiernummer is geset
     if(isset($_POST['passagiernummer'])){
@@ -21,7 +22,6 @@
         // checkt of de passagiernummer nummers zijn
         if(is_numeric($_POST['passagiernummer'])){
             $passagiersnummer = $_POST['passagiernummer'];
-            $where = $passagiersnummer;
             }
             else{
                 $fout = 'geen nummer';
@@ -38,11 +38,19 @@
     $stmt = $db->prepare($query);
     $stmt->execute([':passagiernummer' => $passagiersnummer]);
 
+    // voor als passagier niet bestaat
+    if(isset($_POST['passagiernummer'])){
+        $resultaat = $stmt->rowCount();
+        if($resultaat == 0){
+            $where = 'where 0=1';
+            $fout = 'Geen gegevens gevonden';
+        }
+    }
     // maakt de tabel voor de gegevens
     if($where != 'where 0=1' ){
         $table = '<table class = "passagiersgegevens">';
         $table = $table . '<tr>
-        <th>vluchtnummer</th>
+        <th><a href="?orderby=asc">vluchtnummer</a></th>
         <th>bestemming</th>
         <th>gatecode</th>
         <th>max aantal</th>

@@ -9,11 +9,12 @@ $username = '';
 $password = '';
 $hash = '';
 
-// standaard melding
-$melding = 'De inlog gegevens zijn onjuist.';
-
 // wachtwoord toevoeging
 $salt = 'dfghbgtfvghbnjhbvdsde325rt678ikjhgfr';
+
+// standaard melding
+$melding = '';
+
 
 if(isset($_POST['inloggen'])){
     if(!empty($_POST['gebruikersnaam'])){
@@ -29,25 +30,31 @@ if(isset($_POST['inloggen'])){
         // SQL injectie verkomen
         require_once 'tagremover.php';
         $password = strip($password);
+
         // toevoeging voor de wachtwoord
         $password = $password . $salt;
-        // wachtwoord wordt gehasht
-        $hash = password_hash($password, PASSWORD_DEFAULT);
     }
+    
     // query om medewerker te vinden
-    $query = "select uid from Medewerkers where password = :password and naam = :username";
+    $query = "select password, uid from Medewerkers where naam = :username";
 
     $stmt = $db->prepare($query);
-    $stmt->execute([':password' => $hash, ':username' => $username]);
+    $stmt->execute([":username" => $username]);
 
     // zorgen dat de gegevens kloppen
-    $output=$stmt->fetchAll();
-
-    $hashed_password=$output;
-
-    foreach($hashed_password as $check){    
-    var_dump(password_verify($hash, $hashed_password));
+    $resultaat = $stmt->fetch();
+    if($resultaat) { 
+        if (password_verify($password, $resultaat["password"])){
+            $_SESSION["user"] = $resultaat["uid"];
+            session_start();
+            header('Location: mainmenuMW.php');
+        }else{ 
+        $melding = "verkeerde inloggegevens!";
+        } 
+    }else{
+            $melding = 'Oeps! er is iets verkeerd gegaan ';
     }
+    
 }
 ?>
 
@@ -79,6 +86,7 @@ if(isset($_POST['inloggen'])){
                   <input type="submit" id="opslaan" name="inloggen" value="inloggen">
                 </div>
             </form>
+            <?php echo $melding ?>
         </main>
     </body>
 </html>

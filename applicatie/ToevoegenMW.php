@@ -1,4 +1,5 @@
 <?php
+    session_start();
     // uitgevoerde code is MW-05
     // database connectie
     require_once 'db_connectie.php';

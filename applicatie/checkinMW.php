@@ -1,56 +1,62 @@
 <?php
 // uitgevoerde code is MW-01
-// maakt database connectie
-require_once 'db_connectie.php';
+    session_start();
+    if(!isset($_SESSION["user"])){
+        header('location: index.php');
 
-$db = maakVerbinding();
+    }else {
+        // maakt database connectie
+        require_once 'db_connectie.php';
 
-$uitkomst = '';
+        $db = maakVerbinding();
 
-// inchecken begint
-if(isset($_POST['submit'])){
+        $uitkomst = '';
 
-    // tijd van nu opnemen
-    $datum = date_create('now');
-    $resultaat = $datum->format('Y-m-d H:i:s');
+        // inchecken begint
+        if(isset($_POST['submit'])){
 
-    // ingevulden gegevens
-    $aantalbagage = $_post['bagage'];
-    $passagiernummer = $_POST['passagiernummer'];
-    $vluchtnummer = $_POST['vluchtnr'];
-    $gewicht = $_POST['gewicht'];
+            // tijd van nu opnemen
+            $datum = date_create('now');
+            $resultaat = $datum->format('Y-m-d H:i:s');
 
-    // SQL injectie verkomen
-    require 'tagremover.php';
-    $passagiernummer = strip($passagiernummer);
-    $vluchtnummer = strip($vluchtnummer);
-    $bagage = strip($bagage);
-    $gewicht = strip($gewicht);
-    
-    //query voor de tijdstip
-    $querypassagier = "update passagier
-    set inchecktijdstip = ':inchecktijdstip' 
-    where passagiernummer = :passagiernummer  and vluchtnummer = :vluchtnummer";
+            // ingevulden gegevens
+            $aantalbagage = $_post['bagage'];
+            $passagiernummer = $_POST['passagiernummer'];
+            $vluchtnummer = $_POST['vluchtnr'];
+            $gewicht = $_POST['gewicht'];
 
-    //query voor de bagage
-    $querybagage = 'insert into bagageObject
-    values ( :passagiernummer , :objectvolgnummer  , :gewicht)';
+            // SQL injectie verkomen
+            require 'tagremover.php';
+            $passagiernummer = strip($passagiernummer);
+            $vluchtnummer = strip($vluchtnummer);
+            $bagage = strip($bagage);
+            $gewicht = strip($gewicht);
+            
+            //query voor de tijdstip
+            $querypassagier = "update passagier
+            set inchecktijdstip = ':inchecktijdstip' 
+            where passagiernummer = :passagiernummer  and vluchtnummer = :vluchtnummer";
 
-    try{
-        $stmtpassagier = $db->prepare($querypassagier);
-        $stmtpassagier->execute([':resultaat' => $resultaat, ':passagiernummer' => $passagiernummer, ':vluchtnummer' => $vluchtnummer]);
+            //query voor de bagage
+            $querybagage = 'insert into bagageObject
+            values ( :passagiernummer , :objectvolgnummer  , :gewicht)';
 
-        for($i = 0; $i < $aantalbagage; $i++){
-            $stmtbagage = $db->prepare($querybagage);
-            $stmtbagage->execute([':passagiernummer' => $passagiernummer,':objectvolgnummer' => $i, ':gewicht' => $gewicht ]);
+            try{
+                $stmtpassagier = $db->prepare($querypassagier);
+                $stmtpassagier->execute([':resultaat' => $resultaat, ':passagiernummer' => $passagiernummer, ':vluchtnummer' => $vluchtnummer]);
+
+                for($i = 0; $i < $aantalbagage; $i++){
+                    $stmtbagage = $db->prepare($querybagage);
+                    $stmtbagage->execute([':passagiernummer' => $passagiernummer,':objectvolgnummer' => $i, ':gewicht' => $gewicht ]);
+                }
+                // succes
+                $uitkomst = 'gegevens succesvol doorgevoerd';
+            } catch(PDOException $fault){
+                // SQL error
+                $uitkomst = "Er staat al een aanmelding voor deze gebruiker";
+            }
         }
-        // succes
-        $uitkomst = 'gegevens succesvol doorgevoerd';
-    } catch(PDOException $fault){
-        // SQL error
-        $uitkomst = "Er staat al een aanmelding voor deze gebruiker";
-    }
-}
+    } 
 ?>
 
 <!DOCTYPE html>
@@ -82,8 +88,6 @@ if(isset($_POST['submit'])){
                 <input type="number" id="bagage" name="bagage"> 
             <label>bagage gewicht gemiddeld</label>
                 <input type="number" name="gewicht">
-            <label>objectvolgnummer</label>
-                <input type="number" name="objectvolgnummer">
             <label>balienummer</label>
                 <input type = "number" name="balie" required>
             <br>
