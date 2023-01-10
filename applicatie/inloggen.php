@@ -15,6 +15,9 @@ $salt = 'dfghbgtfvghbnjhbvdsde325rt678ikjhgfr';
 // standaard melding
 $melding = '';
 
+if(isset($_POST['terug'])){
+    header('location: index.php');
+}
 
 if(isset($_POST['inloggen'])){
     if(!empty($_POST['gebruikersnaam'])){
@@ -45,8 +48,8 @@ if(isset($_POST['inloggen'])){
     $resultaat = $stmt->fetch();
     if($resultaat) { 
         if (password_verify($password, $resultaat["password"])){
-            $_SESSION["user"] = $resultaat["uid"];
             session_start();
+            $_SESSION["user"] = $resultaat["uid"];
             header('Location: mainmenuMW.php');
         }else{ 
         $melding = "verkeerde inloggegevens!";
@@ -83,9 +86,11 @@ if(isset($_POST['inloggen'])){
                   <label><b>wachtwoord</b></label> <br>
                   <input type="password" name="wachtwoord" required>
                   <br>
+                  <input type="submit" name="terug" value="terug" formnovalidate> <br>
                   <input type="submit" id="opslaan" name="inloggen" value="inloggen">
                 </div>
             </form>
+            <br> <br>
             <?php echo $melding ?>
         </main>
     </body>

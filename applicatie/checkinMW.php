@@ -4,7 +4,7 @@
     if(!isset($_SESSION["user"])){
         header('location: index.php');
 
-    }else {
+    } else {
         // maakt database connectie
         require_once 'db_connectie.php';
 
@@ -56,6 +56,11 @@
                 $uitkomst = "Er staat al een aanmelding voor deze gebruiker";
             }
         }
+        if(isset($_POST['uitloggen'])){
+            session_unset();
+            session_destroy();
+            header('location index.php');
+        }
     } 
 ?>
 
@@ -98,6 +103,12 @@
         </form>
         <br> <br> <br>
             <?php echo $uitkomst ?>
+            <br> <br> <br>
+            <form action="checkinMW.php" method="post"> 
+            <div class="checkin">
+            <input type="submit" name="uitloggen" value="uitloggen">
+            </div>
+        </form>
     </main>
         <footer>
             <div class="footer">

@@ -1,5 +1,14 @@
 <?php
 session_start();
+    if(!isset($_SESSION["user"])){
+        header('location: index.php');
+}else{
+    if(isset($_POST['uitloggen'])){
+        session_unset();
+        session_destroy();
+        header('location index.php');
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,10 +32,15 @@ session_start();
                     <li><a  class="active" href="mainmenuMW.php">Home</a></li>
                     <li><a  href="checkinMW.php">Passagier inchecken</a></li>
                     <li><a  href="ToevoegenMW.php">Passagier toevoegen</a></li>
-                    <li><a  href="ToevoegenVluchtMW.php">Vlucht toevoegen</a></li>
+                    <li><a  href="vluchttoevoegen.php">Vlucht toevoegen</a></li>
                 </ul>
             </nav>
         <main>
+            <br><br>
+            <form action="mainmenuMW.php" method="post">        
+            <input type="submit" name="uitloggen" value="uitloggen">
+            </form>
+            <br> <br> <br>
             <p>
                 Welkom als medewerker bij Gelre Airport, waar wij de beste werk omgeving van onze medewerkers willen geven.
             </p>

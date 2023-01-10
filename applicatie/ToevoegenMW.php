@@ -1,6 +1,10 @@
 <?php
-    session_start();
     // uitgevoerde code is MW-05
+    session_start();
+    if(!isset($_SESSION["user"])){
+        header('location: index.php');
+
+    } else {
     // database connectie
     require_once 'db_connectie.php';
 
@@ -28,6 +32,13 @@
         
         // succes
         $succes = 'gegevens succesvol doorgevoerd';
+
+        if(isset($_POST['uitloggen'])){
+            session_unset();
+            session_destroy();
+            header('location index.php');
+        }
+        }
     }  
 ?>
 
@@ -70,12 +81,17 @@
                 <br>
             </div>
             <div class="checkin">
-                <button formnovalidate="formnovalidate">Terug</button>
                 <input type="submit" name="submit"> 
             </div>
             </form>
             <br> <br> <br>
             <?php echo $succes ?>
+            <br> <br> <br>
+            <form action="toevoegenMW.php" method="post"> 
+            <div class="checkin">
+            <input type="submit" name="uitloggen" value="uitloggen">
+            </div>
+        </form>
         </main>
     </body>
 </html>
