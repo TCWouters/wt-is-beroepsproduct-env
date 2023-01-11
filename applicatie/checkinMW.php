@@ -87,7 +87,7 @@
                                     
                 // succes
                 $uitkomst = 'gegevens succesvol doorgevoerd';
-            } catch(PDOException $fault){
+            } catch(PDOException){
                 // SQL error
                 $uitkomst = "Fout probeer opnieuw!";
             }
