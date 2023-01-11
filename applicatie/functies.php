@@ -8,8 +8,6 @@ function strip($strip){
   return $stripped;
 }
 
-
-
 // uitloggen
 function uitloggen(){
   session_unset();

@@ -22,7 +22,7 @@
         $balie =                  $_POST['balie'];
         $stoel =                  $_POST['stoel'];
 
-        require 'funcites.php';
+        require 'functies.php';
         $naam =                   strip($naam);
         $passagiernummer =        strip($passagiernummer);
         $geslacht =               strip($geslacht);
