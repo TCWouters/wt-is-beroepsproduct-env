@@ -10,7 +10,7 @@
 
     $db = maakVerbinding();
 
-    $succes = '';
+    $melding = '';
 
     // passagier toevoegen
     if(isset($_POST['submit'])){
@@ -22,6 +22,27 @@
         $balie =                  $_POST['balie'];
         $stoel =                  $_POST['stoel'];
 
+
+        
+        //query voor maximale aantal passagiers
+        $queryplaats = "select max_aantal from vlucht where vluchtnummer = :vluchtnummer";
+
+        $stmtplaats= $db->prepare($queryplaats);
+        $stmtplaats->execute([':vluchtnummer' => $vluchtnummer]);
+
+        $querybezetting = "select count(*) as passagiers from passagier where vluchtnummer = :vluchtnummer";        
+
+        $stmtbezetting= $db->prepare($querybezetting);
+        $stmtbezetting->execute([':vluchtnummer' => $vluchtnummer]);
+
+        $aantalplaatsen = $stmtbezetting->fetch();
+        $resultaatplaats = $stmtplaats->fetch();
+
+        if($aantalplaatsen['passagiers'] + 1 > $resultaatplaats['max_aantal']){
+            $melding = "Het maximale aantal plaatsen voor vlucht ".$vluchtnummer." is overschreden";
+
+        }else{
+
         //query om de passagier in te voeren in de database
         $query = "insert into passagier
         values ( :passagiernummer , :naam , :vluchtnummer , :geslacht , :balie , :stoel , null )";
@@ -31,13 +52,15 @@
         ':geslacht' => $geslacht, ':balie' => $balie, ':stoel' => $stoel]);
         
         // succes
-        $succes = 'gegevens succesvol doorgevoerd';
-
+        $melding = 'gegevens succesvol doorgevoerd';
+        }
+        // logt gebruiker uit
         if(isset($_POST['uitloggen'])){
             require_once 'functies.php';
             uitloggen();
-            }
+        }
     }  
+}
 ?>
 
 <!DOCTYPE html>
@@ -83,7 +106,7 @@
             </div>
             </form>
             <br> <br> <br>
-            <?php echo $succes ?>
+            <?php echo $melding ?>
             <br> <br> <br>
             <form action="toevoegenMW.php" method="post"> 
             <div class="checkin">

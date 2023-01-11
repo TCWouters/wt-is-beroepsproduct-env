@@ -7,6 +7,25 @@
     $db = maakVerbinding();
     $table= '';
     $fout = '';
+    $order = '';
+
+     // sorteren wordt bekeken
+     if(isset($_POST['sorteer'])){
+        switch($_POST['sorteer']) {
+            case 'vertrektijd_asc':
+                $order = 'order by vertrektijd asc';
+                break;
+            case 'vertrektijd_desc':
+                $order = 'order by vertrektijd desc';
+                break;
+            case 'bestemming_asc':
+                $order = 'order by bestemming asc';
+                break;
+            case 'bestemming_desc':
+                $order = 'order by bestemming desc';
+                break;
+        }
+    }
 
     // vlucht wordt uitgevoerd, get wordt gebruikt omdat deze informatie niks veranderd
     if(isset($_GET['vluchtnummer'])){
@@ -17,25 +36,29 @@
         // wordt gecheckt of vluchtnummer een nummer is
         if(is_numeric($_GET['vluchtnummer'])){
             $where = $_GET['vluchtnummer'];
-
+          
             // specifieke query wordt uitgevoerd
-            $query = "select * from vlucht where vluchtnummer = :vluchtnummer";
+            $query = "select * from vlucht where vluchtnummer = :vluchtnummer " . $order;
 
             $stmt = $db->prepare($query);
             $stmt->execute([":vluchtnummer" => $where]);
-        
+            
+        }
         }else{
             $fout = 'geen nummer ingevoerd';
             }
         
-    } 
 
     if(!isset($_GET['vluchtnummer'])){
     // query wordt uitgevoerd
-    $query = "select * from vlucht";
-
-    $stmt = $db->prepare($query);
-    $stmt->execute();
+    if(!empty($order)){
+        $query = "select * from vlucht " . $order;
+    }else{
+        $query = "select * from vlucht";
+    }
+        
+        $stmt = $db->prepare($query);
+        $stmt->execute();
 
         //tabel wordt aangemaakt
         $table = '<table class = "passagiersgegevens">';
@@ -61,8 +84,7 @@
 
         $table = $table . "<tr><td>$vluchtnummer</td>
         <td>$bestemming</td><td>$gatecode</td>
-        <td>$max_aantal</td><td>$max_aantal</td>
-        <td>$max_gewicht_pp</td><td>$max_totaalgewicht</td>
+        <td>$max_aantal</td><td>$max_gewicht_pp</td><td>$max_totaalgewicht</td>
         <td>$vertrektijd</td><td>$maatschappijcode</td></tr>";
     }
 
@@ -134,12 +156,26 @@
             </div>
         </nav>
         <main>
+
+        <form action="" method="post">
+   <button type="submit" name="sorteer" value="vertrektijd_asc">Sort on vertrektijd ascending</button>
+   <button type="submit" name="sorteer" value="vertrektijd_desc">Sort on vertrektijd descending</button>
+   <br> <br>
+   <button type="submit" name="sorteer" value="bestemming_asc">Sort on bestemming ascending</button>
+   <button type="submit" name="sorteer" value="bestemming_desc">Sort on bestemming descending</button>
+    </form> 
+
+            
+        </form>
+
+            <br> <br>
             <form action="vluchten.php" method="get">
-            <input type="number" name="vluchtnummer" placeholder="Zoek vluchtnummer">
-            <button type="hidden" name="submit">Zoek</button>
+            <input type="number" name="vluchtnummer" placeholder="Zoek vluchtnummer" required>
+            <input type="submit" name="submit" value="zoek vlucht">
+            </form>
             <br> <br>
             <?php echo($table) ?>
-            </form>
+            
         </main>
     </body>
 </html>

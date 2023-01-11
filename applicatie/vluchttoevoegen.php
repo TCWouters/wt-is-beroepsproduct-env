@@ -1,10 +1,11 @@
 <?php
+    // uitgevoerde code is MW-04
     session_start();
     if(!isset($_SESSION["user"])){
         header('location: index.php');
 
     } else {
-    // uitgevoerde code is MW-04
+    
     // maakt database connectie
     require_once 'db_connectie.php';
 

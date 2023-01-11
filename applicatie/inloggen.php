@@ -87,7 +87,7 @@ if(isset($_POST['inloggen'])){
                   <input type="password" name="wachtwoord" required>
                   <br>
                   <input type="submit" name="terug" value="terug" formnovalidate> <br>
-                  <input type="submit" id="opslaan" name="inloggen" value="inloggen">
+                  <input type="submit" name="inloggen" value="inloggen">
                 </div>
             </form>
             <br> <br>

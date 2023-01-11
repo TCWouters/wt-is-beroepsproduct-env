@@ -10,6 +10,7 @@
     // in checken start
     if(isset($_POST['submit'])){
         // tijd van nu opnemen
+        
         $datum = date_create('now');
         $resultaat = $datum->format('Y-m-d H:i:s');
 
@@ -26,22 +27,26 @@
         $vluchtnummer = strip($vluchtnummer);
         $gewicht = strip($gewicht);
         
-        //checks voor query's
-        $querygewicht = "select max_gewicht_pp from vlucht where vluchtnummer = :vluchtnummer";
+        //check voor max gewicht
+        $querymaxgewicht = "select max_gewicht_pp from vlucht where vluchtnummer = :vluchtnummer";
 
-        $stmtgewicht= $db->prepare($querygewicht);
-        $stmtgewicht->execute([':vluchtnummer' => $vluchtnummer]);
+            $stmtmaxgewicht= $db->prepare($querymaxgewicht);
+            $stmtmaxgewicht->execute([':vluchtnummer' => $vluchtnummer]);
 
-        $queryplaats = "select max_aantal from vlucht where vluchtnummer = :vluchtnummer";
+            $querytotaalgewicht = "select sum(gewicht) as gewicht from BagageObject 
+            where passagiernummer in (select passagiernummer from Passagier where vluchtnummer = :vluchtnummer)";
 
-        $stmtplaats= $db->prepare($queryplaats);
-        $stmtplaats->execute([':vluchtnummer' => $vluchtnummer]);
+            $stmttotaalgewicht= $db->prepare($querytotaalgewicht);
+            $stmttotaalgewicht->execute([':vluchtnummer' => $vluchtnummer]);
 
+            $resultaatmaxgewicht = $stmtmaxgewicht->fetch();
+            $resultaattotaalgewicht = $stmttotaalgewicht->fetch();
 
-        $stmtgewicht= $db->prepare($querygewicht);
-        $stmtgewicht->execute([':vluchtnummer' => $vluchtnummer]);
+        if(($resultaattotaalgewicht['gewicht'] + ($gewicht*$aantalbagage)) > $resultaatmaxgewicht['max_gewicht_pp'] && 
+            !is_null(!$resultaattotaalgewicht['gewicht'])){
+                $uitkomst = "maximale gewicht overschreden";
+            }else{
 
-        
 
         // query voor de tijdstip
         $querypassagier = "update passagier
@@ -51,25 +56,39 @@
         $querybagage = 'insert into bagageObject
         values (:passagiernummer, :objectvolgnummer, :gewicht)';
 
-
-        try{
+         try{
             $stmtpassagier = $db->prepare($querypassagier);
             $stmtpassagier->execute([':resultaat' => $resultaat, ':passagiernummer' => $passagiernummer, ':vluchtnummer' => $vluchtnummer]);
 
+            // tussenstap voor objectvolgnummer
+                $queryobjectvolgnummer = 'select max(objectvolgnummer) from bagageObject where passagiernummer = :passagiernummer';
+                $stmt = $db->prepare($queryobjectvolgnummer);
+                $stmt->execute([':passagiernummer' => $passagiernummer]);
+                $resultaat = $stmt->fetch();
+                
+
             for($i = 0; $i < $aantalbagage; $i++){
+                if($resultaatobjectvolgnummer[0] != 0){
+                    $objectvolgnummer = $resultaatobjectvolgnummer[0] + 1;
+                    } else{
+                        $objectvolgnummer = 0;
+                    }
                 $stmtbagage = $db->prepare($querybagage);
-                $stmtbagage->execute([':passagiernummer' => $passagiernummer,':objectvolgnummer' => $i, ':gewicht' => $gewicht ]);
+                $stmtbagage->execute([':passagiernummer' => $passagiernummer,':objectvolgnummer' => $objectvolgnummer, 
+                ':gewicht' => $gewicht ]);
             }
             // succes
             $uitkomst = 'gegevens succesvol doorgevoerd';
         } catch(PDOException $fault){
             // SQL error
-            $uitkomst = "Er staat al een aanmelding voor deze gebruiker";
+            $uitkomst = "fout! probeer opnieuw!";
         }
-}
-if(isset($_POST['terug'])){
-    header('location: mainmenu.php');
-}
+        }
+    }
+    //gaat naar de mainmenu
+    if(isset($_POST['terug'])){
+        header('location: mainmenu.php');
+    }
 ?>
 
 <!DOCTYPE html>
