@@ -22,7 +22,13 @@
         $balie =                  $_POST['balie'];
         $stoel =                  $_POST['stoel'];
 
-
+        require 'funcites.php';
+        $naam =                   strip($naam);
+        $passagiernummer =        strip($passagiernummer);
+        $geslacht =               strip($geslacht);
+        $vluchtnummer =           strip($vluchtnummer);
+        $balie =                  strip($balie);
+        $stoel =                  strip($stoel);
         
         //query voor maximale aantal passagiers
         $queryplaats = "select max_aantal from vlucht where vluchtnummer = :vluchtnummer";

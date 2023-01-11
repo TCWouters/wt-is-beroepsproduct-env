@@ -8,8 +8,10 @@
     $table= '';
     $fout = '';
     $order = '';
+    $resultaat = '';
+    $stmt = '';
 
-     // sorteren wordt bekeken
+     // sorteren op wat gebruiker wilt
      if(isset($_POST['sorteer'])){
         switch($_POST['sorteer']) {
             case 'vertrektijd_asc':
@@ -26,9 +28,10 @@
                 break;
         }
     }
-
+    
     // vlucht wordt uitgevoerd, get wordt gebruikt omdat deze informatie niks veranderd
     if(isset($_GET['vluchtnummer'])){
+
         // wordt gecheckt of vluchtnummer niet leeg is
         if($_GET['vluchtnummer'] == "" && isset($_GET['submit'])){
             $fout = 'geen nummer ingevoerd';
@@ -36,7 +39,9 @@
         // wordt gecheckt of vluchtnummer een nummer is
         if(is_numeric($_GET['vluchtnummer'])){
             $where = $_GET['vluchtnummer'];
-          
+
+            require_once 'functies.php';
+            $where = strip($where);
             // specifieke query wordt uitgevoerd
             $query = "select * from vlucht where vluchtnummer = :vluchtnummer " . $order;
 
@@ -59,7 +64,7 @@
         
         $stmt = $db->prepare($query);
         $stmt->execute();
-
+        
         //tabel wordt aangemaakt
         $table = '<table class = "passagiersgegevens">';
         $table = $table . '<tr><th>vluchtnummer</th>
@@ -92,7 +97,9 @@
     }
 
     if(isset($_GET['vluchtnummer'])){
+        
         $resultaat = $stmt->rowCount();
+
         if($resultaat == 0){
             $fout = 'Geen gegevens gevonden';
         }else{
@@ -128,7 +135,6 @@
             $table = $table . "</table>";
         }
     }
-    
 
 ?>
 

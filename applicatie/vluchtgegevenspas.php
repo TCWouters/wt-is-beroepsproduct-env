@@ -15,7 +15,7 @@
 
         // checkt of de passagiernummer niet leeg is
         if($_POST['passagiernummer'] == "" && isset($_POST['submit'])){
-            $where = 'where 0=1';
+            $passagiersnummer = -1;
             $fout = 'geen nummer ingevoerd';
         }
 
@@ -28,7 +28,7 @@
             }
         } 
      else{
-        $where = 'where 0=1';
+        $passagiersnummer = -1;
      }
     
      // query om de passagier te vinden
@@ -42,15 +42,15 @@
     if(isset($_POST['passagiernummer'])){
         $resultaat = $stmt->rowCount();
         if($resultaat == 0){
-            $where = 'where 0=1';
+            $where = -1;
             $fout = 'Geen gegevens gevonden';
         }
     }
     // maakt de tabel voor de gegevens
-    if($where != 'where 0=1' ){
+    if($passagiersnummer != -1){
         $table = '<table class = "passagiersgegevens">';
         $table = $table . '<tr>
-        <th><a href="?orderby=asc">vluchtnummer</a></th>
+        <th>vluchtnummer</th>
         <th>bestemming</th>
         <th>gatecode</th>
         <th>max aantal</th>
@@ -78,11 +78,11 @@
         $i++;
     }
     // als de tabel leeg is dan zijn er geen gegevens
-    if($i == 0 && $where != 'where 0=1'){
+    if($i == 0 && $passagiersnummer != -1){
         $table = 'geen gegevens gevonden voor ' . $_POST['passagiernummer'];
     }
 
-    if($where != 'where 0=1'){
+    if($passagiersnummer != -1){
         $table = $table . "</table>";
     }
 ?>

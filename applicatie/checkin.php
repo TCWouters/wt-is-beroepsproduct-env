@@ -64,7 +64,7 @@
                 $queryobjectvolgnummer = 'select max(objectvolgnummer) from bagageObject where passagiernummer = :passagiernummer';
                 $stmt = $db->prepare($queryobjectvolgnummer);
                 $stmt->execute([':passagiernummer' => $passagiernummer]);
-                $resultaat = $stmt->fetch();
+                $resultaatobjectvolgnummer = $stmt->fetch();
                 
 
             for($i = 0; $i < $aantalbagage; $i++){
